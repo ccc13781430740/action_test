@@ -7,4 +7,6 @@ jobs:
     steps:
       - id: step1
         run: |
-          echo "The commit message is:${{ github.event.head_commit.message }}"
+          # echo "The commit message is:${{ github.event.head_commit.message }}"
+          echo "hello world"
+        continue-on-error: false
