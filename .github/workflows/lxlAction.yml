@@ -9,6 +9,6 @@ jobs:
         run: |
           # echo "The commit message is:${{ github.event.head_commit.message }}"
           echo "hello world"
-          if [[${{ github.event.head_commit.message }}]] =~(EDW)-[0-9]+' '; then echo "YES";
+          if [[${{ github.event.head_commit.message }} =~(EDW)-[0-9]+' ']]; then echo "YES";
           fi echo "No"
         continue-on-error: false
