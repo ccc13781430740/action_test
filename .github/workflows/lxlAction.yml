@@ -1,6 +1,7 @@
 name: Tst Action
 on: push
 jobs:
+  Commit_Message_Check_lxl:
   name: commit message check
   runs-on: ubuntu-latest
   steps:
