@@ -1,0 +1,8 @@
+name: Tst Action
+on: push
+jobs:
+  name: commit message check
+  runs-on: ubuntu-latest
+  steps:
+    -id: step1
+    run: echo ${{ github.event.head_commit.message }}
