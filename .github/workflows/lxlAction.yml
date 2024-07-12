@@ -1,0 +1,15 @@
+name: Tst Action
+on: push
+jobs:
+  Commit_Message_Check_lxl:
+    name: commit message check
+    runs-on: ubuntu-latest
+    steps:
+      - id: step1
+        run: |
+          # echo "The commit message is:${{ github.event.head_commit.message }}"
+          echo "hello world"
+          if [[ "${{ github.event.head_commit.message }}" =~(EDW)-[0-9]+' ' ]]; then
+            echo "Valid commit message!"
+          fi
+        continue-on-error: false
