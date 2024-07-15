@@ -11,5 +11,4 @@ jobs:
           echo "hello world"
           if: ${{ github.event.head_commit.message }}" -match '(EDW)-[0-9]+' ''; then
             echo "Valid commit message!"
-           # echo "enironment: ${{ github.event_name }}"
         continue-on-error: false
