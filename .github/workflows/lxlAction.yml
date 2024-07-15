@@ -15,7 +15,7 @@ jobs:
             echo "Valid commit message!"
           }
            # echo "enironment: ${{ github.event_name }}"
-        continue-on-error: false
+        #continue-on-error: false
       - id: step2
         name: checkout file comment
         run: |
