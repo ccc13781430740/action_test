@@ -24,7 +24,7 @@ jobs:
           title: Sync master to prep
           body: This PR syncs the master branch to the prep branch.
           branch: prep
-          base: prep
+          base: master
           labels: auto-merge
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
