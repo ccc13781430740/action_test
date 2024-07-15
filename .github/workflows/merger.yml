@@ -12,3 +12,17 @@ jobs:
         name: print source and target branch
         run: |
           echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
+      - id: step2
+        name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          ref: main
+      - id: step3
+        name: Create Pull Request to prep
+        uses: peter-evans/create-pull-request@v2
+        with:
+          title: "Merge main into prep"
+          body: "Merge changes from main to prep branch"
+          branch: prep
+          target-branch: prep
+          token: ${{ secrets.GITHUB_TOKEN }}
