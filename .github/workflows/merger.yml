@@ -16,7 +16,7 @@ jobs:
         name: Checkout Code
         uses: actions/checkout@v2
         with:
-          ref: main
+          ref: master
       - id: step3
         name: Create Pull Request to prep
         uses: peter-evans/create-pull-request@v2
