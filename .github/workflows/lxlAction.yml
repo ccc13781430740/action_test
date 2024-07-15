@@ -10,7 +10,7 @@ jobs:
           # echo "The commit message is:${{ github.event.head_commit.message }}"
           echo "hello world"
           $pattern ='(EDW)-[0-9]+'
-          if: ${{ github.event.head_commit.message }}" -match $pattern; then
+          if: "${{ github.event.head_commit.message }}" -match $pattern; then
             echo "Valid commit message!"
            # echo "enironment: ${{ github.event_name }}"
         continue-on-error: false
