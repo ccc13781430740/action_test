@@ -3,7 +3,7 @@ on: push
 jobs:
   Commit_Message_Check_lxl:
     name: commit message check
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - id: step1
         run: |
