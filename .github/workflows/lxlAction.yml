@@ -6,6 +6,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - id: step1
+        name: checkout commit message
         run: |
           # echo "The commit message is:${{ github.event.head_commit.message }}"
           echo "hello world"
@@ -14,4 +15,10 @@ jobs:
             echo "Valid commit message!"
           }
            # echo "enironment: ${{ github.event_name }}"
-        continue-on-error: false
+        #continue-on-error: false
+      - id: step2
+        name: checkout file comment
+        run: |
+          echo "checkout file comment"
+
+
