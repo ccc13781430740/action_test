@@ -4,7 +4,7 @@ on:
       branches:
         - master
 jobs:
-  Merger from master to prep_lxl:
+  Merger_from_master_to_prep_lxl:
     name: Merger from master to prep
     runs-on: windows-latest
     steps:
