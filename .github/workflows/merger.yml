@@ -19,11 +19,12 @@ jobs:
           ref: master
       - id: step3
         name: Create Pull Request to prep
-        uses: repo-sync/pull-request@v2
-        with:
-          source_branch: "master"
-          destination_branch: "prep"
-          pr_title: "Sync main to prep"
-          pr_body: "This PR syncs the main branch to the prep branch."
-          pr_label: "auto-merge"
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        uses: peter-evans/create-pull-request@v3
+          with:
+            title: Sync master to prep
+            body: This PR syncs the master branch to the prep branch.
+            branch: prep
+            base: prep
+            labels: auto-merge
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
