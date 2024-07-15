@@ -1,0 +1,13 @@
+name: merger Action TEST
+on:
+  pull_request:
+    - master
+jobs:
+  Merger from master to prep_lxl:
+    name: Merger from master to prep
+    runs-on: windows-latest
+    steps:
+      - id: step1
+        name: print source and target branch
+        run: |
+          echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
