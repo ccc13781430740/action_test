@@ -33,4 +33,4 @@ jobs:
           branch: prep
           base: master
           labels: auto-merge
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: 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
