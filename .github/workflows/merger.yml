@@ -22,7 +22,7 @@ jobs:
       - id: step3
         name: Setup Git User
         run: |
-          git config --global user.name "Yccc13781430740"
+          git config --global user.name "ccc13781430740"
           git config --global user.email "13781430740@163.com"
       - id: step4
         name: Create Pull Request to prep
