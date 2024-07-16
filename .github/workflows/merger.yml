@@ -12,6 +12,8 @@ jobs:
         name: print source and target branch
         run: |
           echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
+          echo "token is ${{ secrets.RELEASE_TOKEN }}"
+          echo "token is ${{ secrets.GITHUB_TOKEN }}"
       - id: step2
         name: Checkout Code
         uses: actions/checkout@v2
@@ -27,4 +29,4 @@ jobs:
           base: master
           labels: auto-merge
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
