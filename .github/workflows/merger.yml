@@ -34,4 +34,4 @@ jobs:
           base: master
           labels: auto-merge
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
