@@ -27,11 +27,11 @@ jobs:
       - id: step4
         name: Create Pull Request to prep
         uses: peter-evans/create-pull-request@v5
-        $toke='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'
         with:
           title: Sync master to prep
           body: This PR syncs the master branch to the prep branch.
           branch: prep
           base: master
           labels: auto-merge
-          token: $toke
+          committer: 13781430740@163.com
+          token: ${{ secrets.GITHUB_TOKEN }}
