@@ -26,12 +26,11 @@ jobs:
           git config --global user.email "13781430740@163.com"
       - id: step4
         name: Create Pull Request to prep
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           title: Sync master to prep
           body: This PR syncs the master branch to the prep branch.
           branch: prep
           base: master
           labels: auto-merge
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
