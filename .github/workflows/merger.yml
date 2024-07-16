@@ -34,5 +34,5 @@ jobs:
           branch: prep
           base: master
           labels: auto-merge
-          committer: ccc13781430740 <3781430740@163.com>
+          committer: ccc13781430740 <13781430740@163.com>
           token: ${{ secrets.GITHUB_TOKEN }}
