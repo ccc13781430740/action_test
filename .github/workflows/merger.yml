@@ -35,5 +35,4 @@ jobs:
           branch: prep
           base: master
           labels: auto-merge
-          committer: ccc13781430740 <13781430740@163.com>
-          token: ${{ secrets.DEPENDABOT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
