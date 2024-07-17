@@ -12,8 +12,9 @@ jobs:
         name: print source and target branch
         run: |
           echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
-          echo "token is ${{ secrets.RELEASE_TOKEN }}"
-          echo "token is ${{ secrets.GITHUB_TOKEN }}"
+          echo "token1 is ${{ secrets.RELEASE_TOKEN }}"
+          echo "token2 is ${{ secrets.GITHUB_TOKEN }}"
+          echo "token3 is ${{ secrets.DEPENDABOT_TOKEN }}"
           echo "author: ${{ github.actor }}"
       - id: step2
         name: Checkout Code
@@ -35,4 +36,4 @@ jobs:
           base: master
           labels: auto-merge
           committer: ccc13781430740 <13781430740@163.com>
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.DEPENDABOT_TOKEN }}
