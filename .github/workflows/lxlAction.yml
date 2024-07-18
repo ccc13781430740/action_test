@@ -20,7 +20,7 @@ jobs:
         #continue-on-error: false
       - id: step2
         name: Protect Branch
-        if: steps.condition_check.outputs.is_protected == 'true'
+        if: steps.condition_check.outputs.is_protected == 'false'
         uses: actions/github-script@v5
         with:
           script: |
