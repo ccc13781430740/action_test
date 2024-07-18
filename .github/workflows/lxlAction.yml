@@ -11,7 +11,7 @@ jobs:
           # echo "The commit message is:${{ github.event.head_commit.message }}"
           echo "hello world"
           $pattern ='[A-Z0-9]-[0-9]+ '
-          if (!startsWith( '${{ github.event.head_commit.message }}', 'Merge pull request #' )){
+          if (-startsWith( '${{ github.event.head_commit.message }}', 'Merge pull request #' )){
             if ("${{ github.event.head_commit.message }}" -match $pattern){
               echo "Valid commit message!"
             }
