@@ -15,6 +15,7 @@ jobs:
           if (-not ("${{ github.event.head_commit.message }}" -match $pattern)){
             echo "::set-output name=is_protected::false"
             echo "inValid commit message!"
+            exit 1
           }
            # echo "enironment: ${{ github.event_name }}"
         #continue-on-error: false
