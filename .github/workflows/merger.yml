@@ -34,5 +34,6 @@ jobs:
           base: master
           labels: |
             report
+          reviewers: 13781430740@163.com
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update report
