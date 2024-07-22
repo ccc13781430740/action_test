@@ -28,11 +28,11 @@ jobs:
         name: Create Pull Request to prep
         uses: peter-evans/create-pull-request@v6
         with:
+          delete-branch: true
           title: Sync master to prep
           body: This PR syncs the master branch to the prep branch.
           branch: prep
           base: master
-          delete-branch: true
           labels: |
             report
           reviewers: ccc13781430740
