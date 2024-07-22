@@ -1,9 +1,8 @@
 name: merger Action TEST
 on:
   pull_request:
-    types: [synchronize]
-    branches:
-      - master
+      branches:
+        - master
 jobs:
   Merger_from_master_to_prep_lxl:
     name: Merger from master to prep
@@ -22,4 +21,19 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: master
-          fetch-depth: 0
+          fetch-depth: '1000'
+      - id: step3
+        name: Setup Git User
+        run: |
+          git config --global user.name "ccc13781430740"
+          git config --global user.email "13781430740@163.com"
+      - id: step4
+        name: Create Pull Request to prep
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: Sync master to prep
+          body: This PR syncs the master branch to the prep branch.
+          branch: prep
+          base: master
+          labels: auto-merge
+          token: ${{ secrets.GITHUB_TOKEN }}
