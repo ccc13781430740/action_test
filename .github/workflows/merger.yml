@@ -20,7 +20,7 @@ jobs:
           echo "author: ${{ github.actor }}"
       - id: step2
         name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: master
           fetch-depth: 1000
