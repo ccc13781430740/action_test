@@ -24,7 +24,7 @@ jobs:
         with:
           ref: master
           fetch-depth: 1000
-      - id: step4
+      - id: step3
         name: Create Pull Request to prep
         uses: peter-evans/create-pull-request@v6
         with:
@@ -34,3 +34,4 @@ jobs:
           base: master
           labels: auto-merge
           token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Update report
