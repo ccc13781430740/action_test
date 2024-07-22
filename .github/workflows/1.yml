@@ -13,7 +13,7 @@ jobs:
 
       - name: Get recent commits
         id: git_log
-        run: echo "::set-output name=commits::$(git log --pretty=format:'%h - %an, %ar :%s' -n 10)"
+        run: echo "::set-output name=commits::$(git log --pretty=format:'%h - %an, %ar : %s' -n 5)"
 
       - name: Print recent commits
         run: echo "${{ steps.git_log.outputs.commits }}"
