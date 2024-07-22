@@ -28,7 +28,6 @@ jobs:
         name: Create Pull Request to prep
         uses: peter-evans/create-pull-request@v6
         with:
-          delete-branch: true
           title: Sync master to prep
           body: This PR syncs the master branch to the prep branch.
           branch: prep
@@ -38,5 +37,5 @@ jobs:
           reviewers: ccc13781430740
           assignees: ccc13781430740
           token: ${{ secrets.GITHUB_TOKEN }}
-          milestone: 1
+          milestone: 2
           commit-message: Update report
