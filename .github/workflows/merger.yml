@@ -34,6 +34,8 @@ jobs:
           base: master
           labels: |
             report
-          reviewers: 13781430740@163.com
+          reviewers: ccc13781430740
+          assignees: ccc13781430740
           token: ${{ secrets.GITHUB_TOKEN }}
+          milestone: 1
           commit-message: Update report
