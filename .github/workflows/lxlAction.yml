@@ -5,21 +5,32 @@ jobs:
     name: commit message check
     runs-on: windows-latest
     steps:
-      - id: step1
+      - id: condition_check
         name: checkout commit message
         if: ${{ ! startsWith(github.event.head_commit.message, 'Merge pull request ') }}
         run: |
           # echo "The commit message is:${{ github.event.head_commit.message }}"
           echo "hello world"
-          $pattern ='[A-Z0-9]-[0-9]+ '
-          if ("${{ github.event.head_commit.message }}" -match $pattern){
-            echo "Valid commit message!"
+          $pattern ='[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ '
+          if (-not ("${{ github.event.head_commit.message }}" -match $pattern)){
+            echo "::set-output name=is_protected::false"
+            echo "inValid commit message!"
+            throw  "inValid commit message!"
           }
            # echo "enironment: ${{ github.event_name }}"
         #continue-on-error: false
       - id: step2
-        name: checkout file comment
-        run: |
-          echo "checkout file comment"
+        name: Protect Branch
+        if: steps.condition_check.outputs.is_protected == 'false'
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Push Operation Blocked',
+              body: 'The branch you are trying to push to is protected.'
+            });
+            exit(1);
 
 
