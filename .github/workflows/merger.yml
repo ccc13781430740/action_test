@@ -32,6 +32,7 @@ jobs:
           body: This PR syncs the master branch to the prep branch.
           branch: prep
           base: master
+          delete-branch: true
           labels: |
             report
           reviewers: ccc13781430740
