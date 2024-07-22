@@ -30,12 +30,12 @@ jobs:
         with:
           title: Sync master to prep
           body: This PR syncs the master branch to the prep branch.
-          branch: master
-          base: prep
+          branch: prep
+          base: master
           labels: |
             report
           reviewers: ccc13781430740
           assignees: ccc13781430740
           token: ${{ secrets.GITHUB_TOKEN }}
-          milestone: 1
+          milestone: 2
           commit-message: Update report
