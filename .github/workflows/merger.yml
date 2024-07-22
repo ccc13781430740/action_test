@@ -32,6 +32,7 @@ jobs:
           base: master
           labels: |
             report
+            automated pr
           reviewers: ccc13781430740
           assignees: ccc13781430740
           token: ${{ secrets.GITHUB_TOKEN }}
