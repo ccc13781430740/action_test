@@ -32,6 +32,7 @@ jobs:
           body: This PR syncs the master branch to the prep branch.
           branch: prep
           base: master
-          labels: auto-merge
+          labels: |
+            report
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update report
