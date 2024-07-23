@@ -27,12 +27,9 @@ jobs:
       - id: check-messages
         name: Get and Check Commit Messages
         run: |
-          # 获取目标分支名
-          $targetBranch = "${{ github.base_ref }}"
-          # 找到合并基础提交（或分支点）
-          $mergeBase = $(git merge-base origin/$targetBranch HEAD)
           # 获取从合并基础到当前HEAD的所有commit消息
-          $commitMessages = $(git log $mergeBase..HEAD --pretty=format:"%s")
+          $commitMessages = $(git log origin/${{ github.event.pull_request.base.ref }}..${{ github.event.pull_request.head.ref }} --pretty=format:"%s")
+          echo "$commitMessages"
           # 定义正则表达式
           $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
           # 循环校验每个commit消息
