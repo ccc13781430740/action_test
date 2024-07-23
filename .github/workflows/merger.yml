@@ -30,7 +30,7 @@ jobs:
       - id: check-messages
         name: Get and Check Commit Messages
         run: |
-          # 获取从合并基础到当前HEAD的所有commit消息
+          ## 获取从合并基础到当前HEAD的所有commit消息
           $commitMessages = $(git log origin/${{ github.event.pull_request.base.ref }}..origin/${{ github.event.pull_request.head.ref }} --pretty=format:"%s")
           echo "$commitMessages"
           # 定义正则表达式
