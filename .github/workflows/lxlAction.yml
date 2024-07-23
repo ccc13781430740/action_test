@@ -11,6 +11,7 @@ jobs:
           # PowerShell 脚本循环输出 HelloWorld 5 次
           for ($i = 1; $i -le 5; $i++) {
             Write-Host "HelloWorld"
+            Write-Host "$i"
           }
 
 
