@@ -26,7 +26,6 @@ jobs:
           fetch-depth: 1000
       - id: check-messages
         name: Get and Check Commit Messages
-        shell: powershell
         run: |
           # 获取目标分支名
           $targetBranch = "${{ github.base_ref }}"
