@@ -24,8 +24,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 1000
-      - name: Get and Check Commit Messages
-        id: check-messages
+      - id: check-messages
+        name: Get and Check Commit Messages
         shell: powershell
         run: |
           # 获取目标分支名
