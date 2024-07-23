@@ -31,7 +31,6 @@ jobs:
           # 找到PR的头部分支和目标分支（如main）之间的合并基础提交
           MERGE_BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
           echo "::set-output name=merge_base::$MERGE_BASE"
-
       - id: step4
         name: Get Commit Messages Since Merge Base
         shell: powershell
@@ -47,20 +46,19 @@ jobs:
               }
           }
           echo "::set-output name=all_valid::true"
-        - id: step5
-          name: Check if All Commit Messages are Valid
-          if: steps.get-commit-messages.outcome == 'success'
-          shell: bash
-          run: |
-            echo "All commit messages are valid."
-
-        - id: step6
-          name: Fail the Job if Commit Messages are Invalid
-          if: steps.get-commit-messages.outcome != 'success'
-          shell: bash
-          run: |
-            echo "One or more commit messages do not match the required pattern."
-            exit 1
+      - id: step5
+        name: Check if All Commit Messages are Valid
+        if: steps.get-commit-messages.outcome == 'success'
+        shell: bash
+        run: |
+          echo "All commit messages are valid."
+      - id: step6
+        name: Fail the Job if Commit Messages are Invalid
+        if: steps.get-commit-messages.outcome != 'success'
+        shell: bash
+        run: |
+          echo "One or more commit messages do not match the required pattern."
+          exit 1
       #- id: step4
       #  name: Create Pull Request
       #  env:
