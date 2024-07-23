@@ -1,6 +1,8 @@
 name: merger Action TEST
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - master
 jobs:
@@ -22,23 +24,60 @@ jobs:
         with:
           ref: master
           fetch-depth: 1000
-
-      - name: Create Pull Request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - id: step3
+        name: Find Merge Base Commit
+        shell: bash  # 使用bash来简化命令，但PowerShell也可以做到
         run: |
-          # 使用 PowerShell 调用 GitHub API
-          $uri = "https://api.github.com/repos/ccc13781430740/action_test/pulls"
-          $body = @"
-          {
-            "title": "New feature from Windows VM",
-            "head": "master",
-            "base": "prep",
-            "body": "This PR was created from a Windows VM using GitHub Actions."
+          # 找到PR的头部分支和目标分支（如main）之间的合并基础提交
+          MERGE_BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
+          echo "::set-output name=merge_base::$MERGE_BASE"
+
+      - id: step4
+        name: Get Commit Messages Since Merge Base
+        shell: powershell
+        run: |
+          $mergeBase = '${{ steps.find-merge-base.outputs.merge_base }}'
+          $commitMessages = git log $mergeBase..HEAD --pretty=format:"%s"
+          $commitMessages | ForEach-Object {
+              $commitMessage = $_
+              $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
+              if (!($commitMessage -match $pattern)) {
+                  Write-Host "Commit message does not match the pattern: $pattern for commit: $commitMessage"
+                  exit 1
+              }
           }
-          "@
-          $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-          $headers.Add("Accept", "application/vnd.github.v3+json")
-          $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
-          $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json"
-          Write-Output $response | ConvertTo-Json
+          echo "::set-output name=all_valid::true"
+        - id: step5
+          name: Check if All Commit Messages are Valid
+          if: steps.get-commit-messages.outcome == 'success'
+          shell: bash
+          run: |
+            echo "All commit messages are valid."
+
+        - id: step6
+          name: Fail the Job if Commit Messages are Invalid
+          if: steps.get-commit-messages.outcome != 'success'
+          shell: bash
+          run: |
+            echo "One or more commit messages do not match the required pattern."
+            exit 1
+      #- id: step4
+      #  name: Create Pull Request
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  run: |
+      #    # 使用 PowerShell 调用 GitHub API
+      #    $uri = "https://api.github.com/repos/ccc13781430740/action_test/pulls"
+      #    $body = @"
+      #    {
+      #      "title": "New feature from Windows VM",
+      #      "head": "master",
+      #      "base": "prep",
+      #      "body": "This PR was created from a Windows VM using GitHub Actions."
+      #    }
+      #    "@
+      #    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+      #    $headers.Add("Accept", "application/vnd.github.v3+json")
+      #    $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
+      #    $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json"
+      #    Write-Output $response | ConvertTo-Json
