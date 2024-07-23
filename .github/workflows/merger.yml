@@ -29,7 +29,7 @@ jobs:
         shell: bash  # 使用bash来简化命令，但PowerShell也可以做到
         run: |
           # 找到PR的头部分支和目标分支（如main）之间的合并基础提交
-          MERGE_BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
+          $MERGE_BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
           echo "::set-output name=merge_base::$MERGE_BASE"
       - id: step4
         name: Get Commit Messages Since Merge Base
