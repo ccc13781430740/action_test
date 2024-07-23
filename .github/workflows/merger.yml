@@ -24,6 +24,9 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 1000
+      - name: Fetch Base Branch
+        run: |
+          git fetch
       - id: check-messages
         name: Get and Check Commit Messages
         run: |
