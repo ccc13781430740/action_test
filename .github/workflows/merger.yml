@@ -47,9 +47,9 @@ jobs:
           Write-Host "All commit messages are valid."
       - name: Handle Success or Failure
         if: steps.check-messages.outcome == 'success'
+        #continueOnError: true  # 如果前面的步骤失败，也继续执行这个步骤
         run: |
           echo "Commit message check passed."
-        continueOnError: true  # 如果前面的步骤失败，也继续执行这个步骤
       - name: Fail the Job if Commit Messages are Invalid
         if: steps.check-messages.outcome != 'success'
         run: |
