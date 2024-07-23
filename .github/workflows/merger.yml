@@ -22,19 +22,23 @@ jobs:
         with:
           ref: master
           fetch-depth: 1000
-      - id: step3
-        name: Create Pull Request to prep
-        uses: peter-evans/create-pull-request@v6
-        with:
-          title: Sync master to prep
-          body: This PR syncs the master branch to the prep branch.
-          branch: prep
-          base: master
-          labels: |
-            report
-            automated pr
-          reviewers: ccc13781430740
-          assignees: ccc13781430740
-          token: ${{ secrets.GITHUB_TOKEN }}
-          milestone: 2
-          commit-message: Update report
+
+      - name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 使用 PowerShell 调用 GitHub API
+          $uri = "https://api.github.com/repos/ccc13781430740/action_test/pulls"
+          $body = @"
+          {
+            "title": "New feature from Windows VM",
+            "head": "master",
+            "base": "prep",
+            "body": "This PR was created from a Windows VM using GitHub Actions."
+          }
+          "@
+          $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+          $headers.Add("Accept", "application/vnd.github.v3+json")
+          $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
+          $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json"
+          Write-Output $response | ConvertTo-Json
