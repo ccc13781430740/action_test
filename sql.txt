@@ -1,5 +1,5 @@
 create table students(
 id int,
 name nvarchar(100),
-age int
+age bigint
 )
