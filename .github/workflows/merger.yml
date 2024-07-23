@@ -37,7 +37,7 @@ jobs:
           $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
           # 循环校验每个commit消息
           foreach ($message in $commitMessages) {
-           echo "$message"
+           Write-Host "$message"
            if (!$message -match $pattern) {
                Write-Host "Commit message does not match the pattern: $pattern for commit message: $message"
                exit 1  # 如果发现不匹配的，则退出并失败
@@ -49,7 +49,7 @@ jobs:
         if: steps.check-messages.outcome == 'success'
         run: |
           echo "Commit message check passed."
-          continueOnError: true  # 如果前面的步骤失败，也继续执行这个步骤
+        continueOnError: true  # 如果前面的步骤失败，也继续执行这个步骤
       - name: Fail the Job if Commit Messages are Invalid
         if: steps.check-messages.outcome != 'success'
         run: |
