@@ -2,7 +2,7 @@ name: merger Action TEST
 on:
   pull_request:
     types:
-      - closed
+      - opened
     branches:
       - master
 jobs:
