@@ -22,39 +22,72 @@ jobs:
         name: Checkout Code
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ github.head_ref }}
           fetch-depth: 1000
-      - id: step3
-        name: Find Merge Base Commit
+      - name: Get and Check Commit Messages
+        id: check-messages
+        shell: powershell
         run: |
-          # 找到PR的头部分支和目标分支（如main）之间的合并基础提交
-          $MERGE_BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
-          echo "::set-output name=merge_base::$MERGE_BASE"
-      - id: step4
-        name: Get Commit Messages Since Merge Base
-        run: |
-          $mergeBase = '${{ steps.find-merge-base.outputs.merge_base }}'
+          # 获取目标分支名
+          $targetBranch = "${{ github.base_ref }}"
+          # 找到合并基础提交（或分支点）
+          $mergeBase = git merge-base origin/$targetBranch HEAD
+          # 获取从合并基础到当前HEAD的所有commit消息
           $commitMessages = git log $mergeBase..HEAD --pretty=format:"%s"
-          $commitMessages | ForEach-Object {
-              $commitMessage = $_
-              $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
-              if (!($commitMessage -match $pattern)) {
-                  Write-Host "Commit message does not match the pattern: $pattern for commit: $commitMessage"
-                  exit 1
-              }
+          # 定义正则表达式
+          $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
+          # 循环校验每个commit消息
+          foreach ($message in $commitMessages) {
+           if (!$message -match $pattern) {
+               Write-Host "Commit message does not match the pattern: $pattern for commit message: $message"
+               exit 1  # 如果发现不匹配的，则退出并失败
+           }
           }
-          echo "::set-output name=all_valid::true"
-      - id: step5
-        name: Check if All Commit Messages are Valid
-        if: steps.get-commit-messages.outcome == 'success'
-        run: |
-          echo "All commit messages are valid."
-      - id: step6
-        name: Fail the Job if Commit Messages are Invalid
-        if: steps.get-commit-messages.outcome != 'success'
-        run: |
-          echo "One or more commit messages do not match the required pattern."
-          exit 1
+          # 如果所有commit消息都匹配，则继续执行（虽然这里没有后续步骤）
+          Write-Host "All commit messages are valid."
+        - name: Handle Success or Failure
+          if: steps.check-messages.outcome == 'success'
+          shell: bash
+          run: |
+            echo "Commit message check passed."
+            continueOnError: true  # 如果前面的步骤失败，也继续执行这个步骤（仅用于演示）
+        - name: Fail the Job if Commit Messages are Invalid
+          if: steps.check-messages.outcome != 'success'
+          shell: bash
+          run: |
+            echo "Commit message check failed."
+            exit 1
+      #- id: step3
+      #  name: Find Merge Base Commit
+      #  run: |
+      #    # 找到PR的头部分支和目标分支（如main）之间的合并基础提交
+      #    $MERGE_BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
+      #    echo "::set-output name=merge_base::$MERGE_BASE"
+      #- id: step4
+      #  name: Get Commit Messages Since Merge Base
+      #  run: |
+      #    $mergeBase = '${{ steps.find-merge-base.outputs.merge_base }}'
+      #    $commitMessages = git log $mergeBase..HEAD --pretty=format:"%s"
+      #    $commitMessages | ForEach-Object {
+      #        $commitMessage = $_
+      #        $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
+      #        if (!($commitMessage -match $pattern)) {
+      #            Write-Host "Commit message does not match the pattern: $pattern for commit: $commitMessage"
+      #            exit 1
+      #        }
+      #    }
+      #    echo "::set-output name=all_valid::true"
+      #- id: step5
+      #  name: Check if All Commit Messages are Valid
+      #  if: steps.get-commit-messages.outcome == 'success'
+      #  run: |
+      #    echo "All commit messages are valid."
+      #- id: step6
+      #  name: Fail the Job if Commit Messages are Invalid
+      #  if: steps.get-commit-messages.outcome != 'success'
+      #  run: |
+      #    echo "One or more commit messages do not match the required pattern."
+      #    exit 1
       #- id: step4
       #  name: Create Pull Request
       #  env:
