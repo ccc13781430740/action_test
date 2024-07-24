@@ -1,6 +1,5 @@
 create table students(
 id int,
 name nvarchar(100),
-age int,
-class nvarchar(10)
+age int
 )
