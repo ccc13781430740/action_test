@@ -48,7 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           # 使用 PowerShell 调用 GitHub API
-          $uri = "https://api.github.com/repos/ccc13781430740/action_test/${{ steps.step3.outputs.pr_number }}/merge"
+          $uri = "https://api.github.com/repos/ccc13781430740/action_test/REPO/pulls/${{ steps.step3.outputs.pr_number }}/merge"
           $body = @"
           {
             "commit_title": "Sync merger",
