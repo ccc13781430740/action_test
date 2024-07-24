@@ -1,13 +1,14 @@
-name: merger Action TEST
+name: pull_request
 on:
   pull_request:
-    types: [opened,edited,reopened,ready_for_review,review_requested,enqueued,synchronize]
+    types:
+      - closed
     branches:
       - master
 jobs:
-  Merger_from_master_to_prep_lxl:
-    name: Merger from master to prep
-    runs-on: windows-latest
+  Merger_from_PRD_to_prep:
+    name: Merger from PRD to prep
+    runs-on: [TST]
     steps:
       - id: step1
         name: print source and target branch
@@ -15,91 +16,44 @@ jobs:
           echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
           echo "token1 is ${{ secrets.RELEASE_TOKEN }}"
           echo "token2 is ${{ secrets.GITHUB_TOKEN }}"
-          echo "token3 is ${{ secrets.DEPENDABOT_TOKEN }}"
-          echo "author: ${{ github.actor }}"
       - id: step2
         name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}
-          fetch-depth: 1000
-      - name: Fetch Base Branch
+          ref: PRD
+      - id: step3
+        name: Create Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git fetch
-      - id: check-messages
-        name: Get and Check Commit Messages
-        continue-on-error: true
-        run: |
-          ## 获取从合并基础到当前HEAD的所有commit消息
-          $commitMessages = $(git log origin/${{ github.event.pull_request.base.ref }}..origin/${{ github.event.pull_request.head.ref }} --pretty=format:"%s")
-          echo "$commitMessages"
-          # 定义正则表达式
-          $pattern = "^(?:[A-Z0-9]+-[0-9]+(?:;[A-Z0-9]+-[0-9]+)* )([^\s]+)$"
-          # 循环校验每个commit消息
-          foreach ($message in $commitMessages) {
-           Write-Host "$message"
-           if (-not ("$message" -match $pattern)) {
-               Write-Host "Commit message does not match the pattern: $pattern for commit message: $message"
-               exit 1  # 如果发现不匹配的，则退出并失败
-           }
+          # 使用 PowerShell 调用 GitHub API
+          $uri = "https://api.github.com/repos/ccc13781430740/action_test/pulls"
+          $body = @"
+          {
+            "title": "Sync PRD to prep",
+            "head": "master",
+            "base": "prep",
+            "body": "This PR was created using GitHub Actions."
           }
-          # 如果所有commit消息都匹配，则继续执行（虽然这里没有后续步骤）
-          Write-Host "All commit messages are valid."
-      - name: Handle Success or Failure
-        continue-on-error: true  # 如果前面的步骤失败，也继续执行这个步骤
-        if: steps.check-messages.outcome == 'success'
-        run: |
-          echo "Commit message check passed."
-      - name: Fail the Job if Commit Messages are Invalid
-        continue-on-error: true  # 如果前面的步骤失败，也继续执行这个步骤
-        if: steps.check-messages.outcome != 'success'
-        run: |
-          echo "Commit message check failed."
-          exit 1
-      #- id: step3
-      #  name: Find Merge Base Commit
-      #  run: |
-      #    # 找到PR的头部分支和目标分支（如main）之间的合并基础提交
-      #    $MERGE_BASE=$(git merge-base origin/${{ github.base_ref }} ${{ github.head_ref }})
-      #    echo "::set-output name=merge_base::$MERGE_BASE"
+          "@
+          $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+          $headers.Add("Accept", "application/vnd.github.v3+json")
+          $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
+          $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json"
+          Write-Output $response.number
       #- id: step4
-      #  name: Get Commit Messages Since Merge Base
-      #  run: |
-      #    $mergeBase = '${{ steps.find-merge-base.outputs.merge_base }}'
-      #    $commitMessages = git log $mergeBase..HEAD --pretty=format:"%s"
-      #    $commitMessages | ForEach-Object {
-      #        $commitMessage = $_
-      #        $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
-      #        if (!($commitMessage -match $pattern)) {
-      #            Write-Host "Commit message does not match the pattern: $pattern for commit: $commitMessage"
-      #            exit 1
-      #        }
-      #    }
-      #    echo "::set-output name=all_valid::true"
-      #- id: step5
-      #  name: Check if All Commit Messages are Valid
-      #  if: steps.get-commit-messages.outcome == 'success'
-      #  run: |
-      #    echo "All commit messages are valid."
-      #- id: step6
-      #  name: Fail the Job if Commit Messages are Invalid
-      #  if: steps.get-commit-messages.outcome != 'success'
-      #  run: |
-      #    echo "One or more commit messages do not match the required pattern."
-      #    exit 1
-      #- id: step4
-      #  name: Create Pull Request
+      #  name: Merger Pull Request
       #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #    GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       #  run: |
       #    # 使用 PowerShell 调用 GitHub API
-      #    $uri = "https://api.github.com/repos/ccc13781430740/action_test/pulls"
+      #    $uri = "https://api.github.com/repos/ccc13781430740/action_test/"
       #    $body = @"
       #    {
-      #      "title": "New feature from Windows VM",
-      #      "head": "master",
+      #      "title": "Sync PRD to prep",
+      #      "head": "PRD",
       #      "base": "prep",
-      #      "body": "This PR was created from a Windows VM using GitHub Actions."
+      #      "body": "This PR was created using GitHub Actions."
       #    }
       #    "@
       #    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
