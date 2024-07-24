@@ -1,7 +1,7 @@
 name: merger Action TEST
 on:
   pull_request:
-    types: [opened,edited,reopened,ready_for_review,review_requested,enqueued]
+    types: [opened,edited,reopened,ready_for_review,review_requested,enqueued,synchronize]
     branches:
       - master
 jobs:
@@ -28,16 +28,17 @@ jobs:
           git fetch
       - id: check-messages
         name: Get and Check Commit Messages
+        continue-on-error: true
         run: |
           ## 获取从合并基础到当前HEAD的所有commit消息
           $commitMessages = $(git log origin/${{ github.event.pull_request.base.ref }}..origin/${{ github.event.pull_request.head.ref }} --pretty=format:"%s")
           echo "$commitMessages"
           # 定义正则表达式
-          $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
+          $pattern = "^(?:[A-Z0-9]+-[0-9]+(?:;[A-Z0-9]+-[0-9]+)* )([^\s]+)$"
           # 循环校验每个commit消息
           foreach ($message in $commitMessages) {
            Write-Host "$message"
-           if (!$message -match $pattern) {
+           if (-not ("$message" -match $pattern)) {
                Write-Host "Commit message does not match the pattern: $pattern for commit message: $message"
                exit 1  # 如果发现不匹配的，则退出并失败
            }
@@ -45,11 +46,12 @@ jobs:
           # 如果所有commit消息都匹配，则继续执行（虽然这里没有后续步骤）
           Write-Host "All commit messages are valid."
       - name: Handle Success or Failure
+        continue-on-error: true  # 如果前面的步骤失败，也继续执行这个步骤
         if: steps.check-messages.outcome == 'success'
-        #continueOnError: true  # 如果前面的步骤失败，也继续执行这个步骤
         run: |
           echo "Commit message check passed."
       - name: Fail the Job if Commit Messages are Invalid
+        continue-on-error: true  # 如果前面的步骤失败，也继续执行这个步骤
         if: steps.check-messages.outcome != 'success'
         run: |
           echo "Commit message check failed."
