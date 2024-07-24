@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: master
+          fetch-depth: 1000
       - id: step3
         name: Create Pull Request
         env:
@@ -45,18 +46,18 @@ jobs:
       - id: step4
         name: Merger Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # 使用 PowerShell 调用 GitHub API
-          $uri = "https://api.github.com/repos/ccc13781430740/action_test/pulls/${{ steps.step3.outputs.pr_number }}/merge"
-          $body = @"
+          $megerUri = "https://api.github.com/repos/ccc13781430740/action_test/pulls/${{ steps.step3.outputs.pr_number }}/merge"
+          $mergerBody = @"
           {
             "commit_title": "Sync merger",
             "commit_message": "sync merger body",
           }
           "@
-          $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-          $headers.Add("Accept", "application/vnd.github.v3+json")
-          $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
-          $response = Invoke-RestMethod -Uri $uri -Method PUT  -Headers $headers -Body $body -ContentType "application/json"
+          $mergerHeaders = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+          $mergerHeaders.Add("Accept", "application/vnd.github.v3+json")
+          $mergerHeaders.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
+          $response = Invoke-RestMethod -Uri $megerUri -Method PUT  -Headers $mergerHeaders -Body $mergerBody -ContentType "application/json"
           Write-Output $response | ConvertTo-Json
