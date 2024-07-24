@@ -54,7 +54,7 @@ jobs:
           $mergerBody = @"
           {
             "commit_title": "Sync merger",
-            "commit_message": "sync merger body",
+            "commit_message": "sync merger body"
           }
           "@
           $mergerHeaders = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
