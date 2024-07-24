@@ -1,11 +1,13 @@
-name: merger Action TEST
+name: pull_request
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - master
 jobs:
-  Merger_from_master_to_prep_lxl:
-    name: Merger from master to prep
+  Merger_from_PRD_to_prep:
+    name: Merger from PRD to prep
     runs-on: windows-latest
     steps:
       - id: step1
@@ -14,16 +16,13 @@ jobs:
           echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
           echo "token1 is ${{ secrets.RELEASE_TOKEN }}"
           echo "token2 is ${{ secrets.GITHUB_TOKEN }}"
-          echo "token3 is ${{ secrets.DEPENDABOT_TOKEN }}"
-          echo "author: ${{ github.actor }}"
       - id: step2
         name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           ref: master
-          fetch-depth: 1000
-
-      - name: Create Pull Request
+      - id: step3
+        name: Create Pull Request
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -31,14 +30,33 @@ jobs:
           $uri = "https://api.github.com/repos/ccc13781430740/action_test/pulls"
           $body = @"
           {
-            "title": "New feature from Windows VM",
+            "title": "Sync PRD to prep",
             "head": "master",
             "base": "prep",
-            "body": "This PR was created from a Windows VM using GitHub Actions."
+            "body": "This PR was created using GitHub Actions."
           }
           "@
           $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
           $headers.Add("Accept", "application/vnd.github.v3+json")
           $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
           $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json"
+          Write-Output $response.number
+          echo "::set-output name=pr_number::$response.number"
+      - id: step4
+        name: Merger Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          # 使用 PowerShell 调用 GitHub API
+          $uri = "https://api.github.com/repos/ccc13781430740/action_test/${{ steps.step3.outputs.pr_number }}/merge"
+          $body = @"
+          {
+            "commit_title": "Sync merger",
+            "commit_message": "sync merger body",
+          }
+          "@
+          $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+          $headers.Add("Accept", "application/vnd.github.v3+json")
+          $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
+          $response = Invoke-RestMethod -Uri $uri -Method PUT  -Headers $headers -Body $body -ContentType "application/json"
           Write-Output $response | ConvertTo-Json
