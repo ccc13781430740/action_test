@@ -41,23 +41,22 @@ jobs:
           $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
           $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json"
           Write-Output $response.number
-      #- id: step4
-      #  name: Merger Pull Request
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      #  run: |
-      #    # 使用 PowerShell 调用 GitHub API
-      #    $uri = "https://api.github.com/repos/ccc13781430740/action_test/"
-      #    $body = @"
-      #    {
-      #      "title": "Sync PRD to prep",
-      #      "head": "PRD",
-      #      "base": "prep",
-      #      "body": "This PR was created using GitHub Actions."
-      #    }
-      #    "@
-      #    $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-      #    $headers.Add("Accept", "application/vnd.github.v3+json")
-      #    $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
-      #    $response = Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -Body $body -ContentType "application/json"
-      #    Write-Output $response | ConvertTo-Json
+          echo "::set-output name=pr_number::$response.number"
+      - id: step4
+        name: Merger Pull Request
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          # 使用 PowerShell 调用 GitHub API
+          $uri = "https://api.github.com/repos/ccc13781430740/action_test/${{ steps.step3.outputs.pr_number }}/merge"
+          $body = @"
+          {
+            "commit_title": "Sync merger",
+            "commit_message": "sync merger body",
+          }
+          "@
+          $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+          $headers.Add("Accept", "application/vnd.github.v3+json")
+          $headers.Add("Authorization", "Bearer $env:GITHUB_TOKEN")
+          $response = Invoke-RestMethod -Uri $uri -Method PUT  -Headers $headers -Body $body -ContentType "application/json"
+          Write-Output $response | ConvertTo-Json
