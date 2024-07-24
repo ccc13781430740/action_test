@@ -37,7 +37,7 @@ jobs:
           # 循环校验每个commit消息
           foreach ($message in $commitMessages) {
            Write-Host "$message"
-           if (!$message -match $pattern) {
+           if (-not ("$message" -match $pattern) {
                Write-Host "Commit message does not match the pattern: $pattern for commit message: $message"
                exit 1  # 如果发现不匹配的，则退出并失败
            }
