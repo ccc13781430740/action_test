@@ -45,11 +45,12 @@ jobs:
           # 如果所有commit消息都匹配，则继续执行（虽然这里没有后续步骤）
           Write-Host "All commit messages are valid."
       - name: Handle Success or Failure
+        continue-on-error: true  # 如果前面的步骤失败，也继续执行这个步骤
         if: steps.check-messages.outcome == 'success'
-        #continueOnError: true  # 如果前面的步骤失败，也继续执行这个步骤
         run: |
           echo "Commit message check passed."
       - name: Fail the Job if Commit Messages are Invalid
+        continue-on-error: true  # 如果前面的步骤失败，也继续执行这个步骤
         if: steps.check-messages.outcome != 'success'
         run: |
           echo "Commit message check failed."
