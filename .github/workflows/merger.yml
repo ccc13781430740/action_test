@@ -33,7 +33,7 @@ jobs:
           $commitMessages = $(git log origin/${{ github.event.pull_request.base.ref }}..origin/${{ github.event.pull_request.head.ref }} --pretty=format:"%s")
           echo "$commitMessages"
           # 定义正则表达式
-          $pattern = "[A-Z0-9]+-[0-9]+|(?:;[A-Z0-9]+-[0-9]+)+ "
+          $pattern = "^(?:[A-Z0-9]+-[0-9]+(?:;[A-Z0-9]+-[0-9]+)* )([^\s]+)$"
           # 循环校验每个commit消息
           foreach ($message in $commitMessages) {
            Write-Host "$message"
