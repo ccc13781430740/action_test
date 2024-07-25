@@ -9,6 +9,7 @@ jobs:
   Merger_from_PRD_to_prep:
     name: Merger from PRD to prep
     runs-on: windows-latest
+    if: github.event.pull_request.merged == true
     steps:
       - id: step1
         name: print source and target branch
