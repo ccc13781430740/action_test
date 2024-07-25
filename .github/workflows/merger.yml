@@ -2,13 +2,14 @@ name: pull_request
 on:
   pull_request:
     types:
-      - auto_merge_enabled
+      - closed
     branches:
       - master
 jobs:
   Merger_from_PRD_to_prep:
     name: Merger from PRD to prep
     runs-on: windows-latest
+    if: github.event.pull_request.merged == true
     steps:
       - id: step1
         name: print source and target branch
