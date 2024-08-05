@@ -1,0 +1,15 @@
+name: Push test
+on: push
+jobs:
+  Merger_from_PRD_to_prep:
+    name: Merger from PRD to prep
+    runs-on: windows-latest
+    steps:
+      - id: step1
+        name: print source and target branch
+        run: |
+          echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
+          echo "token1 is ${{ secrets.RELEASE_TOKEN }}"
+          echo "token2 is ${{ secrets.GITHUB_TOKEN }}"
+          echo "${{github.repository}}"
+          echo "${{github.repository_owner}}"
