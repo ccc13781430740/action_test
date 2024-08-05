@@ -1,0 +1,37 @@
+name: merger Action TEST
+on:
+  pull_request:
+    types: [opened,edited,reopened,synchronize]
+    branches:
+      - prep
+jobs:
+  Merger_from_master_to_prep_lxl:
+    name: Merger from master to prep
+    runs-on: windows-latest
+    steps:
+      - id: step1
+        name: print source and target branch
+        run: |
+          echo " target branch ${{ github.event.pull_request.base.ref }} source branche ${{ github.event.pull_request.head.ref }} "
+
+      - uses: actions/checkout@v2
+        with:
+          #ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 1000
+      - name: Checkout Code
+        run: |
+          git fetch
+          $commitMessages = $(git log origin/${{ github.event.pull_request.base.ref }}..origin/${{ github.event.pull_request.head.ref }} --pretty=format:"%s")
+          echo "$commitMessages"
+          $pattern = "^(?:[A-Z0-9]+-[0-9]+(?:;[A-Z0-9]+-[0-9]+)* )\s*(.+)$"
+          foreach ($message in $commitMessages) {
+           Write-Host "$message"
+           if (-not ($message.StartsWith("Merge pull request "))){
+             if (-not ("$message" -match $pattern)) {
+                 Write-Host "Commit message does not match the pattern: $pattern for commit message: $message"
+                 throw "Commit message:$message Does not match the pattern: $pattern"
+             }
+            }
+          }
+          Write-Host "All commit messages are valid."
+
